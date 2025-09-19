@@ -1,68 +1,115 @@
-// Common types used across the application
+// TypeScript type definitions for Auction Warehouse System
 
-export interface InventoryItem {
+export interface Item {
   id: string;
-  fieldValues: {
-    '/text': string;
-    '/attributes/@itm01': string; // Barcode
-    '/attributes/@itm02': string; // Item Name
-    '/attributes/@itm03': string; // Brand
-    '/attributes/@itm04': string; // Model
-    '/attributes/@itm05': number; // Year
-    '/attributes/@itm06': string; // Description
-    '/attributes/@itm07': string; // Category
-    '/attributes/@itm08': number; // Quantity
-    '/attributes/@itm09': string; // Case ID
-    '/attributes/@itm10': string; // Lot Number
-    '/attributes/@itm11': string; // Auction ID
-    '/attributes/@itm12': string; // Storage Location
-    '/attributes/@itm13': string; // Date Logged
-    '/attributes/@itm14': string; // Logged By
-    '/attributes/@itm15': string; // Status
-    '/attributes/@itm16': string; // Photo URLs
-    '/attributes/@itm17': number; // Estimated Value
+  barcode?: string;
+  name: string;
+  brand?: string;
+  model?: string;
+  year?: number;
+  description: string;
+  category: string;
+  condition: 'New' | 'Like New' | 'Good' | 'Fair' | 'Poor' | 'For Parts';
+  estimatedValue: number;
+  images: string[];
+  dimensions?: {
+    length: number;
+    width: number;
+    height: number;
+    weight: number;
   };
+  caseId: string;
+  lotId: string;
+  auctionId: string;
+  storageLocationId: string;
+  status: 'Received' | 'Cataloged' | 'Photographed' | 'Listed' | 'Sold' | 'Returned';
+  loggedBy: string;
+  loggedAt: Date;
+  updatedAt: Date;
+  notes?: string;
 }
 
 export interface StorageLocation {
   id: string;
-  fieldValues: {
-    '/text': string;
-    '/attributes/@loc01': string; // Location ID
-    '/attributes/@loc02': string; // Zone
-    '/attributes/@loc03': string; // Aisle
-    '/attributes/@loc04': string; // Shelf
-    '/attributes/@loc05': number; // Max Capacity
-    '/attributes/@loc06': number; // Current Occupancy
-    '/attributes/@loc07': number; // Available Space
-    '/attributes/@loc08': string; // Storage Type
-    '/attributes/@loc09': string; // Status
-    '/attributes/@loc10': string; // Notes
-  };
+  locationId: string;
+  zone: string;
+  aisle?: string;
+  shelf?: string;
+  maxCapacity: number;
+  currentOccupancy: number;
+  availableSpace: number;
+  storageType: 'Shelf' | 'Floor' | 'Rack' | 'Cage';
+  status: 'Available' | 'Full' | 'Maintenance';
+  notes?: string;
 }
 
-export interface AuctionCase {
+export interface Case {
   id: string;
-  fieldValues: {
-    '/text': string;
-    '/attributes/@cas01': string; // Case ID
-    '/attributes/@cas02': string; // Case Name
-    '/attributes/@cas03': string; // Auction ID
-    '/attributes/@cas04': string; // Auction Date
-    '/attributes/@cas05': number; // Total Lots
-    '/attributes/@cas06': number; // Total Items
-    '/attributes/@cas07': string; // Status
-    '/attributes/@cas08': string; // Description
-    '/attributes/@cas09': string; // Created By
-  };
+  caseNumber: string;
+  title: string;
+  description: string;
+  clientName: string;
+  clientContact: string;
+  receivedDate: Date;
+  expectedAuctionDate?: Date;
+  status: 'Active' | 'Processing' | 'Ready' | 'Completed' | 'Cancelled';
+  totalItems: number;
+  estimatedTotalValue: number;
+  notes?: string;
 }
 
-export interface ProductData {
-  name?: string;
-  brand?: string;
-  model?: string;
-  year?: number;
-  description?: string;
-  category?: string;
-  estimatedValue?: number;
+export interface Lot {
+  id: string;
+  lotNumber: string;
+  title: string;
+  description: string;
+  caseId: string;
+  auctionId: string;
+  items: string[];
+  startingBid: number;
+  estimatedValue: number;
+  category: string;
+  status: 'Draft' | 'Ready' | 'Live' | 'Sold' | 'Unsold';
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Auction {
+  id: string;
+  auctionNumber: string;
+  title: string;
+  description: string;
+  auctionDate: Date;
+  startTime: string;
+  endTime: string;
+  location: string;
+  auctioneer: string;
+  status: 'Scheduled' | 'Live' | 'Completed' | 'Cancelled';
+  totalLots: number;
+  totalEstimatedValue: number;
+  actualRevenue?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'Admin' | 'Manager' | 'Cataloger' | 'Photographer' | 'Warehouse';
+  department: string;
+  active: boolean;
+}
+
+export interface InventoryStats {
+  totalItems: number;
+  itemsByStatus: RecordRecord<string, number>;
+  itemsByCategory: RecordRecord<string, number>;
+  storageUtilization: number;
+  recentActivity: {
+    itemsAdded: number;
+    itemsSold: number;
+    itemsPhotographed: number;
+  };
 }
